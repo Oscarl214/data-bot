@@ -1,7 +1,9 @@
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer-extra');
 
-(async () => {
-  // Launch the browser and open a new blank page
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
+
+async function run() {
   const browser = await puppeteer.launch({
     executablePath:
       'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -10,21 +12,17 @@ const puppeteer = require('puppeteer-core');
   const page = await browser.newPage();
 
   // Navigate the page to a URL
-  await page.goto('https://www.pinterest.com/ideas/');
+  await page.goto(
+    'https://gamestop.com/consoles-hardware/xbox-series-x%7Cs/consoles/products/microsoft-xbox-series-x-console/224744.html'
+  );
 
-  // Set screen size
-  await page.setViewport({ width: 1080, height: 1024 });
+  let selector = "button[data-pid='224744']";
 
-  //   // Type into search box
-  //   await page.type('.ujU', 'ronaldo');
+  await page.waitForSelector(selector);
 
-  //   // Wait and click on first result
-  //   const searchResultSelector = '.ActionListItem-label';
-  //   await page.waitForSelector(searchResultSelector);
-  //   await page.click(searchResultSelector);
+  await page.evaluate((selector) => {
+    document.querySelector(selector).click();
+  }, selector);
+}
 
-  // Locate the full title with a unique string
-  await page.screenshot({ path: 'C:Userslealodesktopdata-botindex.png' });
-
-  //   await browser.close();
-})();
+run();
